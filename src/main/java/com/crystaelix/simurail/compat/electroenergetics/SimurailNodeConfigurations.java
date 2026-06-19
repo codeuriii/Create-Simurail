@@ -8,13 +8,13 @@ import net.minecraft.world.phys.Vec3;
 public class SimurailNodeConfigurations {
 
 	public static final NodeConfigurator PHYSICS_BOGEY = new NodeConfigurator.Builder().
-			add(new Vec3(0.125, 0.5, 0.5)).
-			add(new Vec3(0.875, 0.5, 0.5)).
-			add(new Vec3(0.5, 0.875, 0.5)).
+			add(new Vec3(0, 0.5, 0.5)).
+			add(new Vec3(1, 0.5, 0.5)).
+			add(new Vec3(0.5, 1, 0.5)).
 			simple(Direction.SOUTH);
 	public static final NodeConfigurator INVERTED_PHYSICS_BOGEY = new NodeConfigurator.Builder().
-			add(new Vec3(0.125, 0.5, 0.5)).
-			add(new Vec3(0.875, 0.5, 0.5)).
-			add(new Vec3(0.5, 0.125, 0.5)).
+			add(new Vec3(0, 0.5, 0.5)).
+			add(new Vec3(1, 0.5, 0.5)).
+			add(new Vec3(0.5, 0, 0.5)).
 			simple(Direction.SOUTH);
 }

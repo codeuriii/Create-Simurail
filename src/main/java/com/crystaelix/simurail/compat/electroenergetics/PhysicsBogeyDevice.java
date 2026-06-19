@@ -11,17 +11,26 @@ import net.minecraft.world.level.Level;
 
 public class PhysicsBogeyDevice extends SimpleElectricalDevice {
 
+	protected PhysicsBogeyBlockEntity be;
+
 	public PhysicsBogeyDevice(SimulatedDeviceType<?> type, Level level, BlockPos pos, DevicesSavedData deviceSD) {
 		super(level, pos, deviceSD, type);
 	}
 
 	@Override
 	public void preTick(BridgeCollector bridges) {
-		if(level.getBlockEntity(pos) instanceof PhysicsBogeyBlockEntity bogey &&
-				(bogey.getAxle(true).hasTrack() || bogey.getAxle(false).hasTrack())) {
-			bridges.builder(pos).ground(0, 1);
-			bridges.builder(pos).ground(1, 1);
-			bridges.builder(pos).ground(2, 1);
+		if(be == null && level.isLoaded(pos) && level.getBlockEntity(pos) instanceof PhysicsBogeyBlockEntity be) {
+			this.be = be;
+		}
+		if(be != null) {
+			if(be.isRemoved()) {
+				be = null;
+			}
+			else if(be.getAxle(true).hasTrack() || be.getAxle(false).hasTrack()) {
+				bridges.builder(pos).ground(0, 1);
+				bridges.builder(pos).ground(1, 1);
+				bridges.builder(pos).ground(2, 1);
+			}
 		}
 	}
 }
