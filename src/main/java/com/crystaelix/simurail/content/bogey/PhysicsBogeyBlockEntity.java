@@ -69,6 +69,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	public static final double ANGULAR_X_LIMIT = Math.PI / 12;
 	public static final double ANGULAR_Y_LIMIT = Math.PI / 4;
 	public static final double ANGULAR_Z_LIMIT = Math.PI / 4;
+	public static final double TILT_LIMIT = Math.PI / 18;
 
 	public static final Component NAME = Component.translatable("block.simurail.physics_bogey");
 	public static final Component INVERTED_NAME = Component.translatable("item.simurail.inverted_physics_bogey");
@@ -536,20 +537,28 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	}
 
 	protected void updatePivotLimits(ServerSubLevel subLevel, double timeStep) {
+		SimurailPhysicsConfig config = SimurailConfig.SERVER.physics;
+
 		boolean hasTrack = hasTrack();
 		boolean bothTrack = !isDerailed();
 
 		double linYLimit = options.enabled && options.allowVerticalOffset && hasTrack ? LINEAR_Y_LIMIT : 0;
 		double linZLimit = options.enabled && options.allowLateralOffset && hasTrack ? LINEAR_Z_LIMIT : 0;
-		double angXLimit = options.enabled && options.allowYawOffset && options.allowPitchOffset && hasTrack ? ANGULAR_X_LIMIT : 0;
 		double angYLimit = options.enabled && options.allowYawOffset && hasTrack ? ANGULAR_Y_LIMIT : 0;
 		double angZLimit = options.enabled && options.allowPitchOffset && bothTrack ? ANGULAR_Z_LIMIT : 0;
 
 		pivotJoint.setLimit(ConstraintJointAxis.LINEAR_Y, -linYLimit, linYLimit);
 		pivotJoint.setLimit(ConstraintJointAxis.LINEAR_Z, -linZLimit, linZLimit);
-		pivotJoint.setLimit(ConstraintJointAxis.ANGULAR_X, -angXLimit, angXLimit);
 		pivotJoint.setLimit(ConstraintJointAxis.ANGULAR_Y, -angYLimit, angYLimit);
 		pivotJoint.setLimit(ConstraintJointAxis.ANGULAR_Z, -angZLimit, angZLimit);
+
+		double kLateral = getSignedLateralCurvature();
+		double speed = getMovementSpeed();
+		double tiltFactor = config.bogeyAngularTiltFactor.get();
+		double tilt = Math.clamp(Math.atan(speed * speed * kLateral / tiltFactor), -TILT_LIMIT, TILT_LIMIT) * (isInverted() ? -1 : 1);
+
+		double angXLimit = options.enabled && options.allowYawOffset && options.allowPitchOffset && hasTrack ? ANGULAR_X_LIMIT : 0;
+		pivotJoint.setLimit(ConstraintJointAxis.ANGULAR_X, -angXLimit - tilt, angXLimit - tilt);
 	}
 
 	protected void updateForces(ServerSubLevel subLevel, RigidBodyHandle handle, double timeStep) {
@@ -573,7 +582,6 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		queuedForce.zero();
 		queuedTorque.zero();
 
-		ActiveBogeyCounts bogeyCounts = getActiveBogeyCounts(subLevel);
 		SimurailPhysicsConfig config = SimurailConfig.SERVER.physics;
 
 		// Linear Y
@@ -589,7 +597,6 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double damping = normalMass * frequency * dampingRate * 2;
 
 			double forceMag = stiffness * offset - damping * velocity;
-			forceMag /= bogeyCounts.activeVertical;
 
 			queuedForce.fma(forceMag * timeStep, globalBasis.vertical);
 		}
@@ -607,14 +614,17 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double damping = normalMass * frequency * dampingRate * 2;
 
 			double forceMag = stiffness * offset - damping * velocity;
-			forceMag /= bogeyCounts.activeLateral;
-
 			queuedForce.fma(forceMag * timeStep, globalBasis.lateral);
 		}
 
 		// Angular X
 		if(options.allowYawOffset && options.allowPitchOffset) {
-			double offset = SimurailMath.angle(globalPivotVert, globalBasis.vertical, globalBasis.direction);
+			double kLateral = getSignedLateralCurvature();
+			double speed = getMovementSpeed();
+			double tiltFactor = config.bogeyAngularTiltFactor.get();
+			double tilt = Math.atan(speed * speed * kLateral / tiltFactor) * (isInverted() ? -1 : 1);
+
+			double offset = SimurailMath.angle(globalBasis.vertical, globalPivotVert, globalBasis.direction) + tilt;
 			double velocity = globalRelAngVel.dot(globalBasis.direction);
 
 			double maxMoment = config.bogeyAngularSpringMaxMoment.get();
@@ -625,10 +635,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double stiffness = moment * frequency * frequency;
 			double damping = moment * frequency * dampingRate * 2;
 
-			double torqueMag = (-stiffness * offset) - (damping * velocity);
-			if(bogeyCounts.activeRoll > 1) {
-				torqueMag *= 0.5;
-			}
+			double torqueMag = stiffness * offset - damping * velocity;
 
 			queuedTorque.fma(torqueMag * timeStep, globalBasis.direction);
 		}
@@ -647,30 +654,6 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		pivotHandle.applyImpulseAtPoint(SimurailMath.VEC_0, queuedForce);
 		pivotHandle.applyTorqueImpulse(queuedTorque);
 	}
-
-	protected ActiveBogeyCounts getActiveBogeyCounts(ServerSubLevel subLevel) {
-		int activeVertical = 0;
-		int activeLateral = 0;
-		int activeRoll = 0;
-		for(BlockEntitySubLevelActor actor : subLevel.getPlot().getBlockEntityActors()) {
-			if(actor instanceof PhysicsBogeyBlockEntity bogey) {
-				if(bogey.isActive()) {
-					if(bogey.options.allowVerticalOffset) {
-						++activeVertical;
-					}
-					if(getFacing().getAxis() == bogey.getFacing().getAxis() && bogey.options.allowLateralOffset) {
-						++activeLateral;
-					}
-					if(getFacing().getAxis() == bogey.getFacing().getAxis() && bogey.options.allowYawOffset && bogey.options.allowPitchOffset) {
-						++activeRoll;
-					}
-				}
-			}
-		}
-		return new ActiveBogeyCounts(activeVertical, activeLateral, activeRoll);
-	}
-
-	private record ActiveBogeyCounts(int activeVertical, int activeLateral, int activeRoll) {}
 
 	protected boolean isActive() {
 		return options.enabled && axleFront.hasTrack() && axleBack.hasTrack();
@@ -781,8 +764,16 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		return !axleFront.hasTrack() || !axleBack.hasTrack();
 	}
 
+	public double getMovementSpeed() {
+		return (axleFront.speed + axleBack.speed) * 0.5;
+	}
+
 	public double getLateralCurvature() {
 		return Math.max(axleFront.kLateral, axleBack.kLateral);
+	}
+
+	public double getSignedLateralCurvature() {
+		return (axleFront.kLateralSigned + axleBack.kLateralSigned) * 0.5;
 	}
 
 	public double getVerticalCurvature() {

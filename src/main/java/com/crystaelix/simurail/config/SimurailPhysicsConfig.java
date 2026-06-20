@@ -12,9 +12,10 @@ public class SimurailPhysicsConfig extends ConfigBase {
 	public final ConfigFloat bogeyVerticalSpringDampingRate = f(1, 0, Float.MAX_VALUE, "bogeyVerticalSpringDampingRate", Comments.bogeyVerticalSpringDampingRate);
 	public final ConfigFloat bogeyLateralSpringFrequency = f(10, 0, Float.MAX_VALUE, "bogeyLateralSpringFrequency", Units.angularVelocity, Comments.bogeyLateralSpringFrequency);
 	public final ConfigFloat bogeyLateralSpringDampingRate = f(1, 0, Float.MAX_VALUE, "bogeyLateralSpringDampingRate", Comments.bogeyLateralSpringDampingRate);
-	public final ConfigFloat bogeyAngularSpringFrequency = f(20, 0, Float.MAX_VALUE, "bogeyAngularSpringFrequency", Units.angularVelocity, Comments.bogeyAngularSpringFrequency);
-	public final ConfigFloat bogeyAngularSpringDampingRate = f(1, 0, Float.MAX_VALUE, "bogeyAngularSpringDampingRate", Comments.bogeyAngularSpringDampingRate);
-	public final ConfigFloat bogeyAngularSpringMaxMoment = f(20, 0, Float.MAX_VALUE, "bogeyAngularSpringMaxMoment", Units.moment, Comments.bogeyAngularSpringMaxMoment);
+	public final ConfigFloat bogeyAngularTiltFactor = f(50, 0, Float.MAX_VALUE, "bogeyAngularTiltFactor", Units.acceleration, Comments.bogeyAngularTiltFactor);
+	public final ConfigFloat bogeyAngularSpringFrequency = f(15, 0, Float.MAX_VALUE, "bogeyAngularSpringFrequency", Units.angularVelocity, Comments.bogeyAngularSpringFrequency);
+	public final ConfigFloat bogeyAngularSpringDampingRate = f(1.2F, 0, Float.MAX_VALUE, "bogeyAngularSpringDampingRate", Comments.bogeyAngularSpringDampingRate);
+	public final ConfigFloat bogeyAngularSpringMaxMoment = f(50, 0, Float.MAX_VALUE, "bogeyAngularSpringMaxMoment", Units.moment, Comments.bogeyAngularSpringMaxMoment);
 
 	public final ConfigGroup axle = group(1, "axle", "Physics Bogey Axles");
 	public final ConfigFloat axleSpacingUpdateTime = f(2, 0, Float.MAX_VALUE, "axleSpacingUpdateTime", Units.time, Comments.axleSpacingUpdateTime);
@@ -25,6 +26,7 @@ public class SimurailPhysicsConfig extends ConfigBase {
 	public final ConfigFloat axleBrakeStrengthFactor = f(20, 0, Float.MAX_VALUE, "axleBrakeStrengthFactor", Units.force, Comments.axleBrakeStrengthFactor);
 	public final ConfigFloat axleTargetSpeedFactor = f(0.25F, 0, Float.MAX_VALUE, "axleTargetSpeedFactor", Units.velocity, Comments.axleTargetSpeedFactor);
 	public final ConfigFloat axleDriveForceFactor = f(0.5F, 0, Float.MAX_VALUE, "axleDriveForceFactor", Units.damping, Comments.axleDriveForceFactor);
+	public final ConfigFloat axleDerailFrictionFactor = f(0.5F, 0, 1, "axleDerailFrictionFactor", Comments.axleDerailFrictionFactor);
 	public final ConfigFloat axleTrackCheckTime = f(0.1F, 0, Float.MAX_VALUE, "axleTrackCheckTime", Units.time, Comments.axleTrackCheckTime);
 	public final ConfigFloat axleTrackRecheckTime = f(3, 0, Float.MAX_VALUE, "axleTrackRecheckTime", Units.time, Comments.axleTrackRecheckTime);
 
@@ -45,6 +47,7 @@ public class SimurailPhysicsConfig extends ConfigBase {
 		static String bogeyVerticalSpringDampingRate = "Vertical spring damping rate between the Physics Bogey and its pivot.";
 		static String bogeyLateralSpringFrequency = "Lateral spring frequency between the Physics Bogey and its pivot.";
 		static String bogeyLateralSpringDampingRate = "Lateral spring damping rate between the Physics Bogey and its pivot.";
+		static String bogeyAngularTiltFactor = "Factor to determine the tilt between of the Physics Bogey. Tilt is atan(speed² * curvature / factor).";
 		static String bogeyAngularSpringFrequency = "Angular spring frequency between the Physics Bogey and its pivot.";
 		static String bogeyAngularSpringDampingRate = "Angular spring damping rate between the Physics Bogey and its pivot.";
 		static String bogeyAngularSpringMaxMoment = "Angular spring maximum moment between the Physics Bogey and its pivot.";
@@ -57,6 +60,7 @@ public class SimurailPhysicsConfig extends ConfigBase {
 		static String axleBrakeStrengthFactor = "Conversion of brake strength [0-1] to brake force between an axle of the Physics Bogey and its track.";
 		static String axleTargetSpeedFactor = "Conversion of RPM to target speed between an axle of the Physics Bogey and its track.";
 		static String axleDriveForceFactor = "Conversion of current and target speed difference to drive force between an axle of the Physics Bogey and its track.";
+		static String axleDerailFrictionFactor = "Factor of effective friction between an axle of the Physics Bogey and the ground when derailed.";
 		static String axleTrackCheckTime = "Inverval to find nearest track when derailed for an axle of the Physics Bogey.";
 		static String axleTrackRecheckTime = "Inverval to re-find nearest track for an axle of the Physics Bogey.";
 

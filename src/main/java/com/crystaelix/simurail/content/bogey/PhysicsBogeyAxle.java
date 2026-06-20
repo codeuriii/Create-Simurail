@@ -92,6 +92,7 @@ public class PhysicsBogeyAxle {
 	protected AttachableBoxPhysicsObject axleBox;
 	protected FixedConstraintHandle axleBoxJoint;
 
+	protected double kLateralSigned;
 	protected double kLateral;
 	protected double kVertical;
 
@@ -362,10 +363,12 @@ public class PhysicsBogeyAxle {
 
 	protected void updateLimits(ServerSubLevel subLevel, double timeStep) {
 		if(trackSegment != null) {
-			kLateral = Math.abs(globalTrackCurvature.dot(globalAxleFrame.lateral));
+			kLateralSigned = globalTrackCurvature.dot(globalAxleFrame.lateral);
+			kLateral = Math.abs(kLateralSigned);
 			kVertical = globalTrackCurvature.dot(globalAxleFrame.vertical);
 		}
 		else {
+			kLateralSigned = 0;
 			kLateral = 0;
 			kVertical = 0;
 		}
@@ -532,7 +535,8 @@ public class PhysicsBogeyAxle {
 
 		{
 			double normalMass = 1 / massData.getInverseNormalMass(bogeyAxleFrame.position, bogeyAxleFrame.direction);
-			double friction = PhysicsBlockPropertyHelper.getFriction(level.getBlockState(clipResult.getBlockPos())) * 0.5;
+			double frictionFactor = config.axleDerailFrictionFactor.get();
+			double friction = PhysicsBlockPropertyHelper.getFriction(level.getBlockState(clipResult.getBlockPos())) * frictionFactor;
 
 			double brakeStrengthFactor = config.axleBrakeStrengthFactor.get();
 			double brakeStrength = bogey.getBrakeStrength();
