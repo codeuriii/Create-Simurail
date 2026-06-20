@@ -1,0 +1,32 @@
+name: Enhancement Request
+description: "Suggest an enhancement to Simurail."
+labels: [ "enhancement" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If your idea requires discussion or is complicated, [join our discord](https://discord.crystaelix.com/) before posting a new issue.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem description
+      description: "Describe the reason for this suggestion, what is the problem you are trying to solve?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggested solution
+      description: "Describe the solution you would suggest to the above problem."
+    validations:
+      required: true
+  
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: "If there is any additional context needed, such as screenshots or related mods, include here"
+    validations:
+      required: false

@@ -1,0 +1,29 @@
+name: Bug Report
+description: "Report a bug with Simurail."
+labels: [ "bug" ]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe your issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: "Describe the steps and mods required to reproduce the issue."
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Game log
+      description: |
+        The game log is needed for additional information about the bug, especially if it's a crash.
+        This file can be found in the \"logs\" folder of your Minecraft folder as \"latest.log\".
+        Please upload the file to https://mclo.gs/ and put the link here.
+        Do **not** directly paste the *contents* of the file here, because that will make this issue very hard to read.
+    validations:
+      required: false
