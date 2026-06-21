@@ -40,7 +40,7 @@ jobs:
       - name: Build
         run: |
           if [ "${{ inputs.publish }}" = "true" ]; then
-            ./gradlew assemble --stacktrace
+            ./gradlew clean assemble --stacktrace
           else
             ./gradlew assemble --stacktrace -PcommitHash="${{ env.SHORT_SHA }}"
           fi
