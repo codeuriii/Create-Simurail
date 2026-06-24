@@ -27,7 +27,6 @@ public class SimurailBlockEntities {
 			renderer(() -> AutomaticCouplerRenderer::new).
 			validBlocks(SimurailBlocks.AUTOMATIC_COUPLER).
 			register();
-			register();
 
 	public static void register() {
 	}
