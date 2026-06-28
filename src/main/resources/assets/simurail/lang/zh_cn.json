@@ -8,6 +8,7 @@
 
 	"item.simurail.steering_connector.same_block": "方块位置相同",
 	"item.simurail.steering_connector.out_of_range": "超出范围",
+	"item.simurail.steering_connector.cannot_connect": "无法连接至此位置",
 	"item.simurail.steering_connector.connected": "已连接",
 	"item.simurail.steering_connector.disconnected": "已断开连接",
 	"item.simurail.steering_connector.terminated": "已取消选择",

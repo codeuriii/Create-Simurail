@@ -8,6 +8,7 @@
 
 	"item.simurail.steering_connector.same_block": "Same block position",
 	"item.simurail.steering_connector.out_of_range": "Out of range",
+	"item.simurail.steering_connector.cannot_connect": "Cannot connect to this position",
 	"item.simurail.steering_connector.connected": "Connected",
 	"item.simurail.steering_connector.disconnected": "Disconnected",
 	"item.simurail.steering_connector.terminated": "Selection cleared",

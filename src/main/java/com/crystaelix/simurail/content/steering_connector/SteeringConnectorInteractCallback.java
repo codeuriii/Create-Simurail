@@ -76,16 +76,21 @@ public class SteeringConnectorInteractCallback implements InteractCallback {
 					HitResult clientHit = Minecraft.getInstance().hitResult;
 					if(clientHit instanceof BlockHitResult hit && hit.getType() != HitResult.Type.MISS && startPos != null) {
 						BlockPos endPos = hit.getBlockPos();
-						if(level.getBlockEntity(endPos) instanceof SteeringConnectable end &&
-								(start == end || start.canConnectSteeringTo(end))) {
+						if(level.getBlockEntity(endPos) instanceof SteeringConnectable end) {
 							Direction endDir = getDirection(end, hit.getLocation());
 							if(start == end && startDir != endDir) {
 								sendMessage("item.simurail.steering_connector.same_block", SimColors.NUH_UH_RED);
 								return new Result(true);
 							}
-							if(start != end && testRange(level, start, end)) {
-								sendMessage("item.simurail.steering_connector.out_of_range", SimColors.NUH_UH_RED);
-								return new Result(true);
+							if(start != end) {
+								if(!start.canConnectSteeringTo(startDir, end, endDir)) {
+									sendMessage("item.simurail.steering_connector.cannot_connect", SimColors.NUH_UH_RED);
+									return new Result(true);
+								}
+								if(testRange(level, start, end)) {
+									sendMessage("item.simurail.steering_connector.out_of_range", SimColors.NUH_UH_RED);
+									return new Result(true);
+								}
 							}
 
 							if(start == end) {
@@ -180,16 +185,15 @@ public class SteeringConnectorInteractCallback implements InteractCallback {
 		if(clientHit != null && clientHit.getType() != HitResult.Type.MISS && clientHit instanceof BlockHitResult hit) {
 			BlockPos pos = hit.getBlockPos();
 			BlockEntity be = level.getBlockEntity(pos);
-			if(be instanceof SteeringConnectable end &&
-					(startPos == null || level.getBlockEntity(startPos) instanceof SteeringConnectable start &&
-					(start == end || start.canConnectSteeringTo(end)))) {
+			if(be instanceof SteeringConnectable end) {
 				Direction dir = getDirection(end, hit.getLocation());
 				int color = SimColors.SUCCESS_LIME;
 				if(startPos == null) {
 					color = SimColors.ACTIVE_YELLOW;
 				}
 				if(startPos != null && (pos.equals(startPos) && dir != startDir ||
-						level.getBlockEntity(startPos) instanceof SteeringConnectable start && start != end && testRange(level, start, end))) {
+						level.getBlockEntity(startPos) instanceof SteeringConnectable start && start != end &&
+						(testRange(level, start, end) || !start.canConnectSteeringTo(startDir, end, dir)))) {
 					color = SimColors.NUH_UH_RED;
 				}
 

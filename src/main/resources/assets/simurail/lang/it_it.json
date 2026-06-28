@@ -8,6 +8,7 @@
 
 	"item.simurail.steering_connector.same_block": "Blocchi nella stessa posizione",
 	"item.simurail.steering_connector.out_of_range": "Fuori raggio",
+	"item.simurail.steering_connector.cannot_connect": "Impossibile connettersi a questa posizione",
 	"item.simurail.steering_connector.connected": "Connesso",
 	"item.simurail.steering_connector.disconnected": "Disconnesso",
 	"item.simurail.steering_connector.terminated": "Selezione cancellata",

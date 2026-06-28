@@ -47,6 +47,7 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -237,16 +238,24 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 	}
 
 	@Override
-	public boolean canConnectSteeringTo(SteeringConnectable other) {
+	public boolean canConnectSteeringTo(Direction selfDir, SteeringConnectable other, Direction otherDir) {
 		if(other instanceof PhysicsBogeyBlockEntity otherBogey) {
-			return Sable.HELPER.getContaining(this) == Sable.HELPER.getContaining(otherBogey);
+			if(otherDir != getFacing() || Sable.HELPER.getContaining(this) != Sable.HELPER.getContaining(otherBogey)) {
+				return false;
+			}
+			Vec3i normal = getFacing().getNormal();
+			Vec3i delta = getBlockPos().subtract(other.getBlockPos());
+			if(normal.getX() * delta.getX() + normal.getZ() * delta.getZ() <= 0) {
+				return false;
+			}
+			return true;
 		}
 		return false;
 	}
 
 	@Override
 	public double connectionRange(SteeringConnectable other) {
-		if(canConnectSteeringTo(other)) {
+		if(other instanceof PhysicsBogeyBlockEntity) {
 			return SimurailConfig.SERVER.blocks.couplerConnectionRange.get();
 		}
 		return 0;

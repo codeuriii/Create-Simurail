@@ -12,7 +12,7 @@ public interface SteeringConnectable {
 
 	AABB getOutline(Direction direction);
 
-	boolean canConnectSteeringTo(SteeringConnectable other);
+	boolean canConnectSteeringTo(Direction selfDir, SteeringConnectable other, Direction otherDir);
 
 	double connectionRange(SteeringConnectable other);
 

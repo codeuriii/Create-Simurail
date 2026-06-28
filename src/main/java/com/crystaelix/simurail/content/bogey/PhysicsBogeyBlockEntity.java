@@ -22,6 +22,7 @@ import com.crystaelix.simurail.compat.computercraft.SimurailComputerCraftProxy;
 import com.crystaelix.simurail.config.SimurailConfig;
 import com.crystaelix.simurail.config.SimurailPhysicsConfig;
 import com.crystaelix.simurail.content.SimurailBlockEntities;
+import com.crystaelix.simurail.content.automatic_coupler.AutomaticCouplerBlockEntity;
 import com.crystaelix.simurail.content.steering_connector.SteeringConnectable;
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
@@ -39,6 +40,7 @@ import dev.ryanhcode.sable.api.physics.mass.MassData;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3d;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
@@ -185,8 +187,25 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	}
 
 	@Override
-	public boolean canConnectSteeringTo(SteeringConnectable other) {
-		return other instanceof PhysicsBogeyBlockEntity;
+	public boolean canConnectSteeringTo(Direction selfDir, SteeringConnectable other, Direction otherDir) {
+		if(other instanceof PhysicsBogeyBlockEntity) {
+			SubLevel selfSubLevel = Sable.HELPER.getContaining(this);
+			SubLevel otherSubLevel = Sable.HELPER.getContaining(level, other.getBlockPos());
+			Pose3dc selfPose = selfSubLevel == null ? SimurailMath.POSE_I : selfSubLevel.logicalPose();
+			Pose3dc otherPose = otherSubLevel == null ? SimurailMath.POSE_I : otherSubLevel.logicalPose();
+			Vector3d selfNormal = selfPose.transformNormal(new Vector3d(selfDir.step()));
+			Vector3d otherNormal = selfPose.transformNormal(new Vector3d(otherDir.step()));
+			Vector3d selfPos = selfPose.transformPosition(JOMLConversion.atCenterOf(getBlockPos()));
+			Vector3d otherPos = otherPose.transformPosition(JOMLConversion.atCenterOf(other.getBlockPos()));
+			double x = otherPos.x - selfPos.x;
+			double y = otherPos.y - selfPos.y;
+			double z = otherPos.z - selfPos.z;
+			return selfNormal.dot(x, y, z) > 0 && otherNormal.dot(x, y, z) < 0;
+		}
+		if(other instanceof AutomaticCouplerBlockEntity) {
+			return other.canConnectSteeringTo(otherDir, this, selfDir);
+		}
+		return false;
 	}
 
 	@Override
@@ -198,6 +217,9 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			else {
 				return SimurailConfig.SERVER.blocks.bogeyConnectionRangeDifferent.get();
 			}
+		}
+		if(other instanceof AutomaticCouplerBlockEntity) {
+			return other.connectionRange(this);
 		}
 		return 0;
 	}
@@ -228,6 +250,9 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			}
 			// TODO sfx
 			otherBogey.propagateConnectSteering(otherFront, this, front);
+		}
+		if(other instanceof AutomaticCouplerBlockEntity) {
+			other.connectSteering(otherFront, this, front);
 		}
 	}
 
