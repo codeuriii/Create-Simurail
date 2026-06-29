@@ -36,6 +36,7 @@
 	"gui.simurail.physics_bogey.control.braking_inverted": "反向煞車",
 	"gui.simurail.physics_bogey.control.strength": "驅動強度",
 	"gui.simurail.physics_bogey.control.strength_inverted": "反向驅動強度",
+	"gui.simurail.physics_bogey.control.none": "無",
 	"gui.simurail.physics_bogey.stress": "驅動強度",
 	"gui.simurail.physics_bogey.tilt": "傾斜强度",
 	"gui.simurail.physics_bogey.connector": "連接器纜線可見性",

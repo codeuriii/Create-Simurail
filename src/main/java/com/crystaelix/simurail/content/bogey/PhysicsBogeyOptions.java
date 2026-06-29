@@ -21,8 +21,9 @@ public class PhysicsBogeyOptions {
 	public boolean renderFrontConnector = true;
 	public boolean renderBackConnector = true;
 	public PhysicsBogeyControlMode controlMode = PhysicsBogeyControlMode.BRAKING;
-	public float stress = 8;
-	public double tiltStrength = 0;
+
+	private float stress = 8;
+	private double tiltStrength = 0;
 
 	public PhysicsBogeyOptions() {}
 
@@ -53,9 +54,17 @@ public class PhysicsBogeyOptions {
 		return this;
 	}
 
+	public float getStress() {
+		return stress;
+	}
+
 	public PhysicsBogeyOptions setStress(float stress) {
 		this.stress = Math.clamp(stress, 0, 32);
 		return this;
+	}
+
+	public double getTiltStrength() {
+		return tiltStrength;
 	}
 
 	public PhysicsBogeyOptions setTiltStrength(double tiltStrength) {

@@ -174,6 +174,10 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		}
 	}
 
+	public PhysicsBogeyControlOverrides getComputerOverrides() {
+		return computerOverrides;
+	}
+
 	@Override
 	public Direction getFacing() {
 		return getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
@@ -451,7 +455,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		init();
 		super.tick();
 		if(!level.isClientSide()) {
-			if(!computerBehaviour.hasAttachedComputer()) {
+			if(!computerBehaviour.hasAttachedComputer() && computerOverrides.hasOverrides()) {
 				computerOverrides.reset();
 			}
 			if(Sable.HELPER.getContaining(this) instanceof ServerSubLevel) {
@@ -639,7 +643,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double speed = getMovementSpeed();
 			double centAcc = speed * speed * kLateral;
 
-			double tiltStrength = options.tiltStrength * 0.1;
+			double tiltStrength = options.getTiltStrength() * 0.1;
 			double tilt = Math.clamp(Math.atan(centAcc * tiltStrength), -TILT_LIMIT, TILT_LIMIT);
 
 			double torqueOffset = massData.getCenterOfMass().y() - localCenter.y();
@@ -704,7 +708,9 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	}
 
 	public double getBrakeStrength() {
-		// TODO maybe computer?
+		if(computerBehaviour.hasAttachedComputer() && computerOverrides.overrideBrakeStrength) {
+			return computerOverrides.getBrakeStrength();
+		}
 		return switch(options.controlMode) {
 		case BRAKING -> getControlStrength();
 		case BRAKING_INVERTED -> 1 - getControlStrength();
@@ -713,7 +719,9 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	}
 
 	public double getSteerValue() {
-		// TODO maybe computer?
+		if(computerBehaviour.hasAttachedComputer() && computerOverrides.overrideSteerValue) {
+			return computerOverrides.getSteerValue();
+		}
 		int value = switch(getFacing()) {
 		case EAST -> level.getSignal(getBlockPos().south(), Direction.SOUTH) - level.getSignal(getBlockPos().north(), Direction.NORTH);
 		case WEST -> level.getSignal(getBlockPos().north(), Direction.NORTH) - level.getSignal(getBlockPos().south(), Direction.SOUTH);
@@ -748,12 +756,14 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		if(!options.enabled) {
 			return 0;
 		}
-		// TODO maybe computer?
-		return switch(options.controlMode) {
-		case STRENGTH -> (float)getControlStrength();
-		case STRENGTH_INVERTED -> (1 - (float)getControlStrength());
+		if(computerBehaviour.hasAttachedComputer() && computerOverrides.overrideStressMultiplier) {
+			return options.getStress() * (float)computerOverrides.getStressMultiplier();
+		}
+		return options.getStress() * (float)switch(options.controlMode) {
+		case STRENGTH -> getControlStrength();
+		case STRENGTH_INVERTED -> 1 - getControlStrength();
 		case null, default -> 1;
-		} * options.stress;
+		};
 	}
 
 	@Override
@@ -865,6 +875,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		if(!clientPacket) {
 			tag.put("axle_front", axleFront.write());
 			tag.put("axle_back", axleBack.write());
+			tag.put("computer_overrides", computerOverrides.write());
 		}
 
 		if(localPivotOffset != null) {
@@ -918,6 +929,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		if(!clientPacket) {
 			axleFront.read(tag.getCompound("axle_front"));
 			axleBack.read(tag.getCompound("axle_back"));
+			computerOverrides.read(tag.getCompound("computer_overrides"));
 		}
 
 		if(tag.contains("pivot_offset")) {

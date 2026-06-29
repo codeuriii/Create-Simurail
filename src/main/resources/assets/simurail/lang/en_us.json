@@ -36,6 +36,7 @@
 	"gui.simurail.physics_bogey.control.braking_inverted": "Inverted Braking",
 	"gui.simurail.physics_bogey.control.strength": "Strength",
 	"gui.simurail.physics_bogey.control.strength_inverted": "Inverted Strength",
+	"gui.simurail.physics_bogey.control.none": "None",
 	"gui.simurail.physics_bogey.stress": "Drive Strength",
 	"gui.simurail.physics_bogey.tilt": "Tilt Strength",
 	"gui.simurail.physics_bogey.connector": "Connector Cable Visibility",

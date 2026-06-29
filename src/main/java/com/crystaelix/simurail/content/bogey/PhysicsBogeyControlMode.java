@@ -13,7 +13,8 @@ public enum PhysicsBogeyControlMode {
 	BRAKING,
 	BRAKING_INVERTED,
 	STRENGTH,
-	STRENGTH_INVERTED;
+	STRENGTH_INVERTED,
+	NONE;
 
 	public static final IntFunction<PhysicsBogeyControlMode> BY_ID = ByIdMap.continuous(PhysicsBogeyControlMode::ordinal, values(), OutOfBoundsStrategy.ZERO);
 	public static final StreamCodec<ByteBuf, PhysicsBogeyControlMode> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, PhysicsBogeyControlMode::ordinal);

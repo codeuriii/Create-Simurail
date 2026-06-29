@@ -36,6 +36,7 @@
 	"gui.simurail.physics_bogey.control.braking_inverted": "Инвертированное торможение",
 	"gui.simurail.physics_bogey.control.strength": "Усиление",
 	"gui.simurail.physics_bogey.control.strength_inverted": "Инвертированное усиление",
+	"gui.simurail.physics_bogey.control.none": "Никакои",
 	"gui.simurail.physics_bogey.stress": "Сила тяги",
 	"gui.simurail.physics_bogey.tilt": "Сила наклона",
 	"gui.simurail.physics_bogey.connector": "Видимость кабеля подключения",

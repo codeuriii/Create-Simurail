@@ -85,23 +85,23 @@ public class PhysicsBogeyPeripheral extends SyncedPeripheral<PhysicsBogeyBlockEn
 
 	@LuaFunction
 	public final double getMaxStress() {
-		return blockEntity.getOptions().stress;
+		return blockEntity.getOptions().getStress();
 	}
 
 	@LuaFunction(mainThread = true)
 	public final void setMaxStress(double stress) {
-		blockEntity.getOptions().stress = (float)stress;
+		blockEntity.getOptions().setStress((float)stress);
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
 	public final double getTiltStrength() {
-		return blockEntity.getOptions().tiltStrength;
+		return blockEntity.getOptions().getTiltStrength();
 	}
 
 	@LuaFunction(mainThread = true)
 	public final void setTiltStrength(double tiltStrength) {
-		blockEntity.getOptions().tiltStrength = tiltStrength;
+		blockEntity.getOptions().setTiltStrength(tiltStrength);
 		blockEntity.setChanged();
 	}
 
@@ -113,6 +113,72 @@ public class PhysicsBogeyPeripheral extends SyncedPeripheral<PhysicsBogeyBlockEn
 	@LuaFunction(mainThread = true)
 	public final void setControlMode(int mode) {
 		blockEntity.getOptions().controlMode = PhysicsBogeyControlMode.BY_ID.apply(mode);
+		blockEntity.setChanged();
+	}
+
+	@LuaFunction
+	public final boolean hasBrakeStrengthOverride() {
+		return blockEntity.getComputerOverrides().overrideBrakeStrength;
+	}
+
+	@LuaFunction
+	public final double getBrakeStrengthOverride() {
+		return blockEntity.getComputerOverrides().getBrakeStrength();
+	}
+
+	@LuaFunction(mainThread = true)
+	public final void setBrakeStrengthOverride(double brakeStrength) {
+		blockEntity.getComputerOverrides().setBrakeStrength(brakeStrength);
+		blockEntity.setChanged();
+	}
+
+	@LuaFunction(mainThread = true)
+	public final void disableBrakeStrengthOverride() {
+		blockEntity.getComputerOverrides().resetBrakeStrength();
+		blockEntity.setChanged();
+	}
+
+	@LuaFunction
+	public final boolean hasSteerValueOverride() {
+		return blockEntity.getComputerOverrides().overrideSteerValue;
+	}
+
+	@LuaFunction
+	public final double getSteerValueOverride() {
+		return blockEntity.getComputerOverrides().getSteerValue();
+	}
+
+	@LuaFunction(mainThread = true)
+	public final void setSteerValueOverride(double steerValue) {
+		blockEntity.getComputerOverrides().setSteerValue(steerValue);
+		blockEntity.setChanged();
+	}
+
+	@LuaFunction(mainThread = true)
+	public final void disableSteerValueOverride() {
+		blockEntity.getComputerOverrides().resetSteerValue();
+		blockEntity.setChanged();
+	}
+
+	@LuaFunction
+	public final boolean hasStressMultiplierOverride() {
+		return blockEntity.getComputerOverrides().overrideStressMultiplier;
+	}
+
+	@LuaFunction
+	public final double getStressMultiplierOverride() {
+		return blockEntity.getComputerOverrides().getStressMultiplier();
+	}
+
+	@LuaFunction(mainThread = true)
+	public final void setStressMultiplierOverride(double stressMultiplier) {
+		blockEntity.getComputerOverrides().setStressMultiplier(stressMultiplier);
+		blockEntity.setChanged();
+	}
+
+	@LuaFunction(mainThread = true)
+	public final void disableStressMultiplierOverride() {
+		blockEntity.getComputerOverrides().resetStressMultiplier();
 		blockEntity.setChanged();
 	}
 

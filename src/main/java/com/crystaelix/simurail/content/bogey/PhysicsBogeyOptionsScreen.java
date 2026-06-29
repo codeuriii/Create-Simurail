@@ -56,7 +56,8 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyScreen {
 			Component.translatable("gui.simurail.physics_bogey.control.braking"),
 			Component.translatable("gui.simurail.physics_bogey.control.braking_inverted"),
 			Component.translatable("gui.simurail.physics_bogey.control.strength"),
-			Component.translatable("gui.simurail.physics_bogey.control.strength_inverted"));
+			Component.translatable("gui.simurail.physics_bogey.control.strength_inverted"),
+			Component.translatable("gui.simurail.physics_bogey.control.none"));
 	public static final List<Component> CONNECTOR_OPTIONS = List.of(
 			Component.translatable("gui.simurail.physics_bogey.connector.visible"),
 			Component.translatable("gui.simurail.physics_bogey.connector.invisible"),
@@ -180,7 +181,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyScreen {
 		stressInput.titled(STRESS_TITLE.plainCopy());
 		stressInput.format(i -> Component.literal(String.valueOf(i * 0.5F)));
 		stressInput.writingTo(stressLabel);
-		stressInput.setState((int)(options.stress * 2));
+		stressInput.setState((int)(options.getStress() * 2));
 		stressInput.calling(i -> options.setStress(i * 0.5F));
 
 		tiltInput = new ScrollInput(x + 45, y + 155, 109, 18);
@@ -189,7 +190,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyScreen {
 		tiltInput.titled(TILT_TITLE.plainCopy());
 		tiltInput.format(i -> Component.literal(i + "%"));
 		tiltInput.writingTo(tiltLabel);
-		tiltInput.setState((int)(options.tiltStrength * 100));
+		tiltInput.setState((int)(options.getTiltStrength() * 100));
 		tiltInput.calling(i -> options.setTiltStrength(i * 0.01));
 
 		connectorInput = new SelectionScrollInput(x + 45, y + 177, 109, 18);
