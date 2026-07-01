@@ -730,10 +730,9 @@ public class PhysicsBogeyAxle {
 			Map.Entry<TrackNode, TrackEdge> best = null;
 
 			boolean forward = pair.getFirst();
-			double steerValue = bogey.getSteerValue();
 			Vector3d trackDir = JOMLConversion.toJOML(point.edge.getDirection(!forward));
-			boolean aligned = trackAxleFrame.direction.dot(trackDir) > 0;
-			Vector3d trackLat = trackDir.mul(aligned ? 1 : -1, new Vector3d()).cross(0, 1, 0).normalize();
+			double steerValue = bogey.getSteerValue();
+			Vector3d trackLat = trackAxleFrame.lateral;
 
 			Vector3d steerTarget = new Vector3d();
 			steerTarget.fma(forward ? 1 : -1, trackDir);
