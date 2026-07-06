@@ -295,7 +295,7 @@ public class PhysicsBogeyAxle {
 			trackFrame.orientation(globalTrackRot).premul(trackSubLevelPose.orientation());
 
 			bogeyForceFrame.set(trackFrame);
-			bogeyForceFrame.position.add(0, 0.5, 0);
+			bogeyForceFrame.position.fma(0.5, trackFrame.vertical);
 			bogeyForceFrame.transform(trackSubLevelPose).transformInverse(subLevel.logicalPose());
 
 			Sable.HELPER.getVelocity(subLevel.getLevel(), trackAxleFrame.position, globalTrackVel);
@@ -312,7 +312,7 @@ public class PhysicsBogeyAxle {
 			clipSubLevel = (ServerSubLevel)Sable.HELPER.getContaining(level, clipPos);
 
 			bogeyForceFrame.set(axleFrame);
-			bogeyForceFrame.position.add(0, 0.5, 0);
+			bogeyForceFrame.position.fma(0.5, axleFrame.vertical);
 			bogeyForceFrame.transform(bogey.pivotPose).transformInverse(subLevel.logicalPose());
 
 			Sable.HELPER.getVelocity(level, clipPos, globalHitVel);
