@@ -548,7 +548,7 @@ public class PhysicsBogeyAxle {
 
 			double speedSign = Math.signum(speed);
 			double speedSignMag = Math.clamp(Math.abs(speed), 0, 1);
-			double signFactor = speedSignMag * Math.sqrt(Math.sqrt(Math.sqrt(Math.sqrt(speedSignMag)))) * speedSign;
+			double signFactor = (speedSignMag * speedSignMag * speedSignMag * 0.25 + speedSignMag * 0.75) * speedSign;
 			double brakeForce = signFactor * (brakeStrengthFactor * brakeStrength) * normalMass * Math.max(friction, 0.05);
 
 			bogeyForceFrame.direction.mul(driveForce * timeStep, queuedTractionForce);
@@ -625,7 +625,7 @@ public class PhysicsBogeyAxle {
 
 			double speedSign = Math.signum(speed);
 			double speedSignMag = Math.clamp(Math.abs(speed), 0, 1);
-			double signFactor = speedSignMag * Math.sqrt(Math.sqrt(Math.sqrt(Math.sqrt(speedSignMag)))) * speedSign;
+			double signFactor = (speedSignMag * speedSignMag * speedSignMag * 0.25 + speedSignMag * 0.75) * speedSign;
 			double brakeForce = signFactor * (brakeStrengthFactor * brakeStrength) * normalMass * Math.max(friction, 0.05);
 
 			bogeyForceFrame.direction.mul(driveForce * timeStep, queuedTractionForce);
