@@ -55,6 +55,7 @@ public class AutomaticCouplerBlock extends HorizontalDirectionalBlock implements
 	public static final MapCodec<AutomaticCouplerBlock> CODEC = simpleCodec(AutomaticCouplerBlock::new);
 	public static final EnumProperty<GangwayFrameBlockShape> GANGWAY_SHAPE = EnumProperty.create("gangway_shape", GangwayFrameBlockShape.class, GangwayFrameBlockShape.COUPLER);
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+	public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
 
 	public static final VoxelShaper SHAPES = VoxelShaper.forHorizontal(box(5, 5, 0, 11, 11, 3), Direction.SOUTH);
 	public static final VoxelShaper[] D_SHAPES = IntStream.range(0, 30).
@@ -69,7 +70,11 @@ public class AutomaticCouplerBlock extends HorizontalDirectionalBlock implements
 
 	public AutomaticCouplerBlock(Properties properties) {
 		super(properties);
-		registerDefaultState(defaultBlockState().setValue(GANGWAY_SHAPE, GangwayFrameBlockShape.NONE).setValue(POWERED, false).setValue(WATERLOGGED, false));
+		registerDefaultState(defaultBlockState().
+				setValue(GANGWAY_SHAPE, GangwayFrameBlockShape.NONE).
+				setValue(POWERED, false).
+				setValue(TRIGGERED, false).
+				setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -80,7 +85,7 @@ public class AutomaticCouplerBlock extends HorizontalDirectionalBlock implements
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		super.createBlockStateDefinition(builder);
-		builder.add(FACING, GANGWAY_SHAPE, POWERED, WATERLOGGED);
+		builder.add(FACING, GANGWAY_SHAPE, POWERED, TRIGGERED, WATERLOGGED);
 	}
 
 	@Override
@@ -160,11 +165,14 @@ public class AutomaticCouplerBlock extends HorizontalDirectionalBlock implements
 		}
 		boolean previouslyPowered = state.getValue(POWERED);
 		boolean isPowered = level.hasNeighborSignal(pos);
-		if(previouslyPowered != isPowered) {
-			level.setBlock(pos, state.cycle(POWERED), UPDATE_CLIENTS);
-			if(isPowered) {
+		if(isPowered) {
+			level.setBlock(pos, state.setValue(POWERED, true).setValue(TRIGGERED, false), UPDATE_CLIENTS);
+			if(previouslyPowered != isPowered) {
 				withBlockEntityDo(level, pos, AutomaticCouplerBlockEntity::tryDisconnectGangway);
 			}
+		}
+		else if(!state.getValue(TRIGGERED)) {
+			level.setBlock(pos, state.setValue(POWERED, false), UPDATE_CLIENTS);
 		}
 	}
 
@@ -178,9 +186,26 @@ public class AutomaticCouplerBlock extends HorizontalDirectionalBlock implements
 		double hitY = hitResult.getLocation().y - hitResult.getBlockPos().getY();
 		if(hitY > 0.3 && hitY < 0.7) {
 			if(stack.isEmpty()) {
-				withBlockEntityDo(level, pos, AutomaticCouplerBlockEntity::cycleLength);
-				IWrenchable.playRotateSound(level, pos);
-				return ItemInteractionResult.SUCCESS;
+				if(player.isSecondaryUseActive()) {
+					if(!state.getValue(POWERED)) {
+						BlockState newState = state.setValue(POWERED, true).setValue(TRIGGERED, true);
+						level.setBlock(pos, newState, UPDATE_CLIENTS);
+						if(!level.isClientSide()) {
+							withBlockEntityDo(level, pos, AutomaticCouplerBlockEntity::tryDisconnectGangway);
+						}
+						return ItemInteractionResult.SUCCESS;
+					}
+					else if(state.getValue(TRIGGERED)) {
+						BlockState newState = state.setValue(POWERED, false).setValue(TRIGGERED, false);
+						level.setBlock(pos, newState, UPDATE_CLIENTS);
+						return ItemInteractionResult.SUCCESS;
+					}
+				}
+				else {
+					withBlockEntityDo(level, pos, AutomaticCouplerBlockEntity::cycleLength);
+					IWrenchable.playRotateSound(level, pos);
+					return ItemInteractionResult.SUCCESS;
+				}
 			}
 			if(stack.getItem() instanceof DyeItem dye) {
 				withBlockEntityDo(level, pos, be -> be.setColor(dye.getDyeColor().getFireworkColor()));
