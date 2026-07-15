@@ -209,6 +209,9 @@ dependencies {
 	implementation "curse.maven:create-blocks-bogies-1317252:7471348"
 	implementation "cc.tweaked:cc-tweaked-1.21.1-forge:1.120.0"
 	implementation "curse.maven:create-electro-energetics-1443327:8345582"
+	implementation("com.lowdragmc.ldlib2:ldlib2-neoforge-1.21.1:2.2.27:all") {transitive = false}
+	implementation "curse.maven:sable-schematic-tool-1526951:8247085"
+	implementation "curse.maven:synaxis-1526348:8412557"
 
 	// Testing
 	runtimeOnly("dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1:1.3.0") {transitive = false}
@@ -222,8 +225,6 @@ dependencies {
 	runtimeOnly "curse.maven:drive-by-wire-with-sable-1520378:8247104"
 	runtimeOnly "curse.maven:create-deco-509285:7943181"
 	runtimeOnly "curse.maven:create-aeronauticstoolgun-1521349:8243840"
-	runtimeOnly("com.lowdragmc.ldlib2:ldlib2-neoforge-1.21.1:2.2.27:all") {transitive = false}
-	runtimeOnly "curse.maven:sable-schematic-tool-1526951:8247085"
 
 	// Performance
 	runtimeOnly "curse.maven:yeetusexperimentus-635427:5444189"
