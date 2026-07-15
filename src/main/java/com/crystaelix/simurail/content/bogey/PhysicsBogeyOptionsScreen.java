@@ -17,6 +17,7 @@ import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 
@@ -178,7 +179,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 		axleInput.titled(AXLE_TITLE.plainCopy());
 		axleInput.format(i -> Component.literal(String.valueOf(i * 0.0625F)));
 		axleInput.writingTo(axleLabel);
-		axleInput.setState((int)(options.getAxleOffset() * 16));
+		axleInput.setState(Math.round(options.getAxleOffset() * 16));
 		axleInput.calling(i -> options.setAxleOffset(i * 0.0625F));
 
 		controlInput = new SelectionScrollInput(x + 31, y + 86, 109, 18);
@@ -194,7 +195,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 		stressInput.titled(STRESS_TITLE.plainCopy());
 		stressInput.format(i -> Component.literal(String.valueOf(i * 0.5F)));
 		stressInput.writingTo(stressLabel);
-		stressInput.setState((int)(options.getStress() * 2));
+		stressInput.setState(Math.round(options.getStress() * 2));
 		stressInput.calling(i -> options.setStress(i * 0.5F));
 
 		tiltInput = new ScrollInput(x + 171, y + 108, 109, 18);
@@ -203,7 +204,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 		tiltInput.titled(TILT_TITLE.plainCopy());
 		tiltInput.format(i -> Component.literal(i + "%"));
 		tiltInput.writingTo(tiltLabel);
-		tiltInput.setState((int)(options.getTiltStrength() * 100));
+		tiltInput.setState(Math.round(options.getTiltStrength() * 100));
 		tiltInput.calling(i -> options.setTiltStrength(i * 0.01F));
 
 		connectorInput = new SelectionScrollInput(x + 31, y + 130, 109, 18);

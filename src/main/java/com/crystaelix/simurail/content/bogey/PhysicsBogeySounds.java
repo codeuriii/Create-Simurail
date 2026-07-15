@@ -43,7 +43,7 @@ public class PhysicsBogeySounds {
 		//track = playIfMissing(mc, train2, bogey.options.type::soundEvent);
 
 		float volume = Math.min(speedFactor.getValue(), distanceFactor.getValue() * 0.01F) * 0.5F;
-		float pitch1 = Mth.clamp(speedFactor.getValue() + 0.25F, 0.5F, 1.25F);
+		float pitch1 = Mth.clamp(speedFactor.getValue() + 0.25F, 0.5F, 1F);
 		//float pitch2 = Mth.clamp(speedFactor.getValue(), 0.5F, 1.5F);
 
 		rumble.setPitch(pitch1);

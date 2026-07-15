@@ -10,6 +10,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.Vector3f;
 
+import com.crystaelix.simurail.api.control.PIDController;
 import com.crystaelix.simurail.api.math.Basis3d;
 import com.crystaelix.simurail.api.math.MovingQuaternionfLerp;
 import com.crystaelix.simurail.api.math.MovingVector3fLerp;
@@ -71,7 +72,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 
 	public static final double LINEAR_Y_LIMIT = 0.5;
 	public static final double LINEAR_Z_LIMIT = 1;
-	public static final double ANGULAR_X_LIMIT = Math.PI / 9;
+	public static final double ANGULAR_X_LIMIT = Math.PI / 12;
 	public static final double ANGULAR_Y_LIMIT = Math.PI / 4;
 	public static final double ANGULAR_Z_LIMIT = Math.PI / 4;
 	public static final double TILT_LIMIT = Math.PI / 18;
@@ -112,6 +113,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	public double visualSpeed = 0;
 	protected double lastVisualSpeed = 0;
 	protected final LerpedFloat lerpedCurvature = LerpedFloat.linear();
+	protected final PIDController rollController = new PIDController();
 
 	// Client rendering components
 	protected final MovingQuaternionfLerp renderPivotRot = MovingQuaternionfLerp.of(2);
@@ -664,7 +666,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double offset = SimurailMath.angle(globalBasis.vertical, globalPivotVert, globalBasis.direction);
 			double velocity = globalRelAngVel.dot(globalBasis.direction);
 
-			lerpedCurvature.chase(getSignedLateralCurvature(), timeStep * 0.05, Chaser.exp(timeStep * 0.1));
+			lerpedCurvature.chase(getSignedLateralCurvature(), timeStep * 4, Chaser.EXP);
 			lerpedCurvature.tickChaser();
 			double kLateral = lerpedCurvature.getValue();
 			double speed = getMovementSpeed();
@@ -677,15 +679,15 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double tiltStrength = options.getTiltStrength() * 0.1;
 			double tilt = Math.clamp(Math.atan(centAcc * tiltStrength), -TILT_LIMIT, TILT_LIMIT);
 
-			double moment = SimurailMath.moment(massData, localCenter, localDir);
+			double momentMultiplier = config.bogeyAngularControllerMomentMultiplier.get();
+			double maxTorque = config.bogeyAngularControllerMaxTorque.get();
+			double moment = SimurailMath.moment(massData, localCenter, localDir) * momentMultiplier;
 
-			double frequency = config.bogeyAngularSpringFrequency.get();
-			double dampingRate = config.bogeyAngularSpringDampingRate.get();
-			double stiffness = moment * frequency * frequency;
-			double damping = moment * frequency * dampingRate * 2;
-			double maxTorque = config.bogeyAngularSpringMaxTorque.get();
-
-			double torqueMag = (centTorque + stiffness * (offset + tilt) - damping * velocity) / getActiveBogeyCount(subLevel);
+			rollController.setFrequency(config.bogeyAngularControllerFrequency.get());
+			rollController.setDampingRate(config.bogeyAngularControllerDampingRate.get());
+			rollController.setErrorDecayRate(config.bogeyAngularControllerErrorDecayRate.get());
+			rollController.setIntegralGain(config.bogeyAngularControllerIntegralGain.get());
+			double torqueMag = rollController.updateForce(moment, offset + tilt, velocity, maxTorque, timeStep) + centTorque / getActiveBogeyCount(subLevel);
 			torqueMag = Math.clamp(torqueMag, -maxTorque, maxTorque);
 
 			queuedTorque.fma(torqueMag * timeStep, globalBasis.direction);

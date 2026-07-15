@@ -11,9 +11,12 @@ public class SimurailPhysicsConfig extends SimurailBaseConfig {
 	public final ConfigFloat bogeyLateralSpringFrequency = f(10, 0, Float.MAX_VALUE, "bogeyLateralSpringFrequency", Units.angularVelocity, Comments.bogeyLateralSpringFrequency);
 	public final ConfigFloat bogeyLateralSpringDampingRate = f(1.2F, 0, Float.MAX_VALUE, "bogeyLateralSpringDampingRate", Comments.bogeyLateralSpringDampingRate);
 	public final ConfigFloat bogeyLateralSpringMaxForce = f(10000, 0, Float.MAX_VALUE, "bogeyLateralSpringMaxForce", Units.force, Comments.bogeyLateralSpringMaxForce);
-	public final ConfigFloat bogeyAngularSpringFrequency = f(15, 0, Float.MAX_VALUE, "bogeyAngularSpringFrequency", Units.angularVelocity, Comments.bogeyAngularSpringFrequency);
-	public final ConfigFloat bogeyAngularSpringDampingRate = f(1.2F, 0, Float.MAX_VALUE, "bogeyAngularSpringDampingRate", Comments.bogeyAngularSpringDampingRate);
-	public final ConfigFloat bogeyAngularSpringMaxTorque = f(5000, 0, Float.MAX_VALUE, "bogeyAngularSpringMaxTorque", Units.torque, Comments.bogeyAngularSpringMaxTorque);
+	public final ConfigFloat bogeyAngularControllerFrequency = f(15, 0, Float.MAX_VALUE, "bogeyAngularControllerFrequency", Units.angularVelocity, Comments.bogeyAngularControllerFrequency);
+	public final ConfigFloat bogeyAngularControllerDampingRate = f(1.2F, 0, Float.MAX_VALUE, "bogeyAngularControllerDampingRate", Comments.bogeyAngularControllerDampingRate);
+	public final ConfigFloat bogeyAngularControllerErrorDecayRate = f(1, 0, Float.MAX_VALUE, "bogeyAngularControllerErrorDecayRate", Units.frequency, Comments.bogeyAngularControllerErrorDecayRate);
+	public final ConfigFloat bogeyAngularControllerIntegralGain = f(50, 0, Float.MAX_VALUE, "bogeyAngularControllerIntegralGain", Units.integralGain, Comments.bogeyAngularControllerIntegralGain);
+	public final ConfigFloat bogeyAngularControllerMomentMultiplier = f(3, 0, Float.MAX_VALUE, "bogeyAngularControllerMomentMultiplier", Comments.bogeyAngularControllerMomentMultiplier);
+	public final ConfigFloat bogeyAngularControllerMaxTorque = f(10000, 0, Float.MAX_VALUE, "bogeyAngularControllerMaxTorque", Units.torque, Comments.bogeyAngularControllerMaxTorque);
 
 	public final ConfigGroup axle = group(1, "axle", "Physics Bogey Axles");
 	public final ConfigFloat axleSpacingUpdateTime = f(2, 0, 10, "axleSpacingUpdateTime", Units.time, Comments.axleSpacingUpdateTime);
@@ -48,9 +51,12 @@ public class SimurailPhysicsConfig extends SimurailBaseConfig {
 		static String bogeyLateralSpringFrequency = "Lateral spring frequency between the Physics Bogey and its pivot.";
 		static String bogeyLateralSpringDampingRate = "Lateral spring damping rate between the Physics Bogey and its pivot.";
 		static String bogeyLateralSpringMaxForce = "Lateral spring maximum force between the Physics Bogey and its pivot.";
-		static String bogeyAngularSpringFrequency = "Angular spring frequency between the Physics Bogey and its pivot.";
-		static String bogeyAngularSpringDampingRate = "Angular spring damping rate between the Physics Bogey and its pivot.";
-		static String bogeyAngularSpringMaxTorque = "Angular spring maximum torque between the Physics Bogey and its pivot.";
+		static String bogeyAngularControllerFrequency = "Angular PID controller frequency between the Physics Bogey and its pivot.";
+		static String bogeyAngularControllerDampingRate = "Angular PID controller damping rate between the Physics Bogey and its pivot.";
+		static String bogeyAngularControllerErrorDecayRate = "Angular PID controller error decay rate between the Physics Bogey and its pivot.";
+		static String bogeyAngularControllerIntegralGain = "Angular PID controller integral gain between the Physics Bogey and its pivot.";
+		static String bogeyAngularControllerMomentMultiplier = "Angular PID controller moment multiplier between the Physics Bogey and its pivot.";
+		static String bogeyAngularControllerMaxTorque = "Angular PID controller maximum torque between the Physics Bogey and its pivot.";
 
 		static String axleSpacingUpdateTime = "Time to update the axle spacing when changed for the axles of the Physics Bogey.";
 		static String axlePassiveLinearDamping = "Passive linear damping between an axle of the Physics Bogey and its track.";
