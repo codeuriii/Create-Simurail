@@ -176,9 +176,9 @@ public class GangwayFrameBlock extends HorizontalDirectionalBlock implements IBE
 					if(be.getGangwayPartner() == null) {
 						be.tryConnectGangway();
 					}
-					else {
-						be.tryDisconnectGangway();
-					}
+					// else {
+					// 	be.tryDisconnectGangway();
+					// }
 				});
 			}
 			return ItemInteractionResult.SUCCESS;
