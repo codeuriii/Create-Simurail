@@ -157,7 +157,8 @@ public class GangwayFrameBlock extends HorizontalDirectionalBlock implements IBE
 			level.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
 			if(isPowered) {
 				withBlockEntityDo(level, pos, GangwayFrameBlockEntity::tryDisconnectGangway);
-			} else {
+			}
+			else {
 				withBlockEntityDo(level, pos, GangwayFrameBlockEntity::tryConnectGangway);
 			}
 		}
