@@ -589,14 +589,14 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Men
 						lastJointLength = jointLength;
 					}
 				}
-				else {
-					removePartner();
-					removeJoint();
-				}
 			}
 			else {
+				removePartner();
 				removeJoint();
 			}
+		}
+		else {
+			removeJoint();
 		}
 	}
 
